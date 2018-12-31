@@ -1,8 +1,6 @@
 const pkg = require('./package')
-
 module.exports = {
-  mode: 'universal',
-
+  mode: 'universal',  
   /*
   ** Headers of the page
   */
@@ -28,26 +26,40 @@ module.exports = {
       { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicons/favicon-32x32.png'},
       { rel: 'icon', type: 'image/png', sizes: '96x96', href: '/favicons/favicon-96x96.png'},
       { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicons/favicon-16x16.png'}
+    ],
+    script: [      
+      // { src: '/js/TweenMax.min.js' },
+      // { src: '/js/MorphSVGPlugin.min.js'},
+      // { src: '/js/SplitText.min.js' },
+      // { src: '/js/ModifiersPlugin.min.js'}
+      
+      
+      { src: '/angle2-nuxt/js/TweenMax.min.js' },      
+      { src: '/angle2-nuxt/js/MorphSVGPlugin.min.js'},
+      { src: '/angle2-nuxt/js/SplitText.min.js' },
+      { src: '/angle2-nuxt/js/ModifiersPlugin.min.js' }
+      
     ]
   },
 
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#fff' },
+  loading: { color: 'red' },
 
   /*
   ** Global CSS
   */
   css: [
-    '@/assets/css/normalize.css',
-    '@/assets/css/vue2-scrollbar.css'
+    '@assets/css/normalize.css',
+    '@assets/css/vue2-scrollbar.css'
   ],
 
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
+    
   ],
 
   /*
@@ -56,10 +68,15 @@ module.exports = {
   modules: [
   ],
 
+  router: {
+    base: '/angle2-nuxt/'
+  },
+  
+
   /*
   ** Build configuration
   */
-  build: {
+  build: {    
     /*
     ** You can extend webpack config here
     */

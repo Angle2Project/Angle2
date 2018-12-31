@@ -56,6 +56,6 @@ export default {
 
 <style>
 #loader {
-  
+  visibility: hidden;
 }
 </style>

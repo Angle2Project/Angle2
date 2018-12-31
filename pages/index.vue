@@ -1,5 +1,5 @@
 <template>
-  <div id="app-start">
+  <div id="app-start" class="noselect">
     <ul class="text portrait" v-if="mobile">
       <li class="left">
         <div class="text-wrapper">          
@@ -39,12 +39,15 @@
           <h2 ref="r4">{{text.desktop.row4}}</h2>
         </div>
       </li>
-    </ul>
+    </ul>    
   </div>    
 </template>
 
 <script>
 export default {
+  mounted: function(){
+    const app = this;    
+  },
   data () {
     return {
       text : {
@@ -66,46 +69,23 @@ export default {
     }
   },
   computed: {    
+    firstPage: function(){
+      return this.$store.state.firstPage;
+    },
     mobile: function(){
       return this.$store.state.mobile;
     },
     mousemove: function(){
       return this.$store.state.mousemove;
+    },
+    cursorLongAnimate: function(){
+      return this.$store.state.cursorLongAnimate;
     }
-  },
-  mounted : function(){
-    const app = this;
-    app.$store.commit('set', {
-      name: 'cursorColor',
-      value: '#b6b6b6'
-    });
-    app.$store.commit('set', {
-      name: 'cursorHoverColor',
-      value: '#2af8eb'
-    });
-    TweenMax.to('.preloader span', 1.3, {y : 50});    
-    TweenMax.set([document.querySelectorAll('.dda span'), document.querySelectorAll('.go-tonext span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-    TweenMax.to('.preloader', 1.3, {height: (app.mobile ? 60 : 90), y : (app.mobile ? -50 : -70), ease: Power3.easeOut, onComplete : function(){
-      app.$store.commit('set', {
-        name : 'transitionPage',
-        value : false
-      });
-      TweenMax.to('.g-pager div', 0.4, {x : 0});
-      TweenMax.to('.logo', 0.4, {y : 0});
-      TweenMax.to('.follow-us_title span', 0.4, {y : 0, onComplete : function(){
-          TweenMax.to('header .menu span', 0.3, {y : 0});
-          TweenMax.staggerTo(['header .process', 'header .projects', 'header .contact', 'header .lng'], 0.3, {y : 0}, 0.1);                
-        TweenMax.staggerTo(['.follow-us li.be', '.follow-us li.dr', '.follow-us li.fb', '.follow-us li.ig'], 0.3, {y : 0}, 0.1);          
-      }});
-    }});
-    TweenMax.fromTo(document.querySelectorAll('.text .left h2:nth-child(odd)'), 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
-    TweenMax.fromTo(document.querySelectorAll('.text .right h2:nth-child(odd)'), 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
-    TweenMax.fromTo(document.querySelectorAll('.text .left h2:nth-child(even)'), 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
-    TweenMax.fromTo(document.querySelectorAll('.text .right h2:nth-child(even)'), 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
-  },
+  },  
   watch : {
     mousemove: function(val){
-      
+      const app = this;
+      if(app.cursorLongAnimate)return;
       var rootX = -((window.innerWidth / 2) - val.x);
         document.querySelectorAll('#app-start .text h2').forEach(function(el, i, arr){
         var moveX = 100 / ((window.innerWidth / 2) / rootX);
@@ -119,8 +99,135 @@ export default {
             css : {transform : 'rotate(15deg) skewX(15deg) translateX('+x+'px)'}          
           });
         }        
+      });      
+    },
+    cursorLongAnimate: function(val){
+      const app = this;
+      if(val){        
+        TweenMax.to(document.querySelectorAll('.text .left h2:nth-child(odd)'), 2.1, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)'}, ease: Power2.easeIn});
+        TweenMax.to(document.querySelectorAll('.text .right h2:nth-child(odd)'), 2.1, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)'}, ease: Power2.easeIn});
+        TweenMax.to(document.querySelectorAll('.text .left h2:nth-child(even)'), 2.1, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'}, ease: Power2.easeIn});
+        TweenMax.to(document.querySelectorAll('.text .right h2:nth-child(even)'), 2.1, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'}, ease: Power2.easeIn});        
+      }else{
+        TweenMax.to(document.querySelectorAll('.text .left h2:nth-child(odd)'), 1.5, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+        TweenMax.to(document.querySelectorAll('.text .right h2:nth-child(odd)'), 1.5, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+        TweenMax.to(document.querySelectorAll('.text .left h2:nth-child(even)'), 1.5, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+        TweenMax.to(document.querySelectorAll('.text .right h2:nth-child(even)'), 1.5, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+      }
+    }
+  },
+  methods: {
+    
+  },
+  transition : {
+    mode : 'out-in',
+    css : false,
+    enter : function(el, done){      
+      const app = this;    
+      console.log('enter Index');  
+      app.$store.commit('set', {
+        name: 'page',
+        value: 'home'
+      });      
+      app.$store.commit('set', {
+        name: 'cursorColor',
+        value: '#b6b6b6'
       });
-      
+      app.$store.commit('set', {
+        name: 'cursorHoverColor',
+        value: '#2af8eb'
+      });
+      app.$store.commit('set', {
+        name: 'cursorLongAnimatePermit',
+        value: true
+      });
+      app.$store.commit('set', {
+        name: 'scroll',
+        value: true
+      });
+      if(app.$store.state.firstPage){
+        /*============= First render ========== */
+        TweenMax.to('.preloader span', 1.3, {y : 50});    
+        TweenMax.set([document.querySelectorAll('.dda span'), document.querySelectorAll('.go-tonext span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
+        TweenMax.to('.preloader', 1.3, {height: (app.mobile ? 60 : 90), y : (app.mobile ? -50 : -70), ease: Power3.easeOut, onComplete : function(){
+          app.$store.commit('set', {
+            name : 'transitionPage',
+            value : false
+          });
+          TweenMax.to('.g-pager div', 0.4, {x : 0});
+          TweenMax.to('.logo', 0.4, {y : 0});
+          TweenMax.to('.follow-us_title span', 0.4, {y : 0, onComplete : function(){
+              TweenMax.to('header .menu span', 0.3, {y : 0});
+              TweenMax.staggerTo(['header .process', 'header .projects', 'header .contact', 'header .lng'], 0.3, {y : 0}, 0.1);                
+            TweenMax.staggerTo(['.follow-us li.be', '.follow-us li.dr', '.follow-us li.fb', '.follow-us li.ig'], 0.3, {y : 0}, 0.1);          
+          }});
+        }});
+        TweenMax.fromTo(document.querySelectorAll('.text .left h2:nth-child(odd)'), 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+        TweenMax.fromTo(document.querySelectorAll('.text .right h2:nth-child(odd)'), 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+        TweenMax.fromTo(document.querySelectorAll('.text .left h2:nth-child(even)'), 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+        TweenMax.fromTo(document.querySelectorAll('.text .right h2:nth-child(even)'), 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});  
+        app.$store.commit('set', {
+          name : 'firstPage',
+          value : false
+        });
+      }else{
+        /*============= Transition render ========== */
+        TweenMax.set('#app-start .text', {visibility: 'hidden'})
+        TweenMax.set('.main-bg', {backgroundColor : '#ffffff', height : '100%', width : 0, x : 0});        
+        TweenMax.to('.main-bg', 0.7, {width : '100%', ease: Power3.easeIn});
+        TweenMax.to('.main-bg', 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});              
+        TweenMax.to('.preloader', 0.7, {backgroundColor : '#000000', ease: Power3.easeIn, onComplete : function(){
+          app.$store.commit('set', {
+            name: 'pager',
+            value: '01'
+          });
+          TweenMax.set('#app', {backgroundColor : '#ffffff'});
+          TweenMax.set('.main-bg', {backgroundColor : 'transparent', width : 0, height : 0});
+          TweenMax.set([document.querySelectorAll('.dda span'), document.querySelectorAll('.go-tonext span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
+          TweenMax.to('.preloader', 0.7, {height: (app.mobile ? 60 : 90), y : (app.mobile ? -50 : -70), ease: Power3.easeOut, onComplete:function(){
+            app.$store.commit('set', {
+              name : 'transitionPage',
+              value : false
+            });
+            app.$store.commit('set', {
+              name : 'scroll',
+              value : true
+            });            
+          }});
+          TweenMax.set('#app-start .text', {visibility: 'visible'});
+          TweenMax.fromTo(document.querySelectorAll('.text .left h2:nth-child(odd)'), 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+          TweenMax.fromTo(document.querySelectorAll('.text .right h2:nth-child(odd)'), 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+          TweenMax.fromTo(document.querySelectorAll('.text .left h2:nth-child(even)'), 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+          TweenMax.fromTo(document.querySelectorAll('.text .right h2:nth-child(even)'), 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});    
+          
+          
+          // app.global.currentComponent = 'home';
+          // app.global.page = 'home';
+          // app.global.pager = '01';
+          // app.transitionPage = false;
+          // app.cursor.hoverActive = false;
+          // app.scroll = true;
+        }});
+      }      
+    },
+    leave : function(el, done){
+      const app = this;
+      app.$store.commit('set', {
+        'name': 'transitionPage',
+        value: true
+      });      
+      if(app.$store.state.cursorLongAnimate){
+        done();
+      }else{
+        TweenMax.to(document.querySelectorAll('.text .left h2:nth-child(odd)'), 0.6, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)'}, ease: Power2.easeIn});
+        TweenMax.to(document.querySelectorAll('.text .right h2:nth-child(odd)'), 0.6, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)'}, ease: Power2.easeIn});
+        TweenMax.to(document.querySelectorAll('.text .left h2:nth-child(even)'), 0.6, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'}, ease: Power2.easeIn});
+        TweenMax.to(document.querySelectorAll('.text .right h2:nth-child(even)'), 0.6, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'}, ease: Power2.easeIn});
+        TweenMax.set([document.querySelectorAll('.dda span'), document.querySelectorAll('.go-tonext span')], {css : {'letter-spacing': (app.mobile ? '10px' : '20px'), 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
+        TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
+          done();
+        }});
+      }      
     }
   }
 }
@@ -174,7 +281,7 @@ export default {
     font-weight: 900;
     letter-spacing: -.45vw;
     display: table;
-    margin: auto;    
+    margin: auto;
 }
 .portrait .text-wrapper h2 {
     font-size: 13.7vw;

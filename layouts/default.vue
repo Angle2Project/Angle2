@@ -1,5 +1,5 @@
 <template>
-  <div id="app" @mousemove="mousemove">
+  <div id="app" :class="page" @mousemove="mousemove" @mousedown="longClick" @mouseup="longClick" @mousewheel="mousewheel">    
     <!--========== Custom cursor =============== -->
     <svg class="cursor-ring" width="60" height="60">
       <circle
@@ -98,10 +98,10 @@
     <div class="go-tonext">
       <div class="go-tonext__wrapper">
         <div>
-          <span data-next @mouseenter="hoverLinks($event);hoverNext($event)" @mouseleave="hoverLinks($event);hoverNext($event)">go play</span>
+          <span data-next @mouseenter="hoverLinks($event);hoverNext($event)" @mouseleave="hoverLinks($event);hoverNext($event)" @click="goToNext">go play</span>
         </div>
         <div>
-          <span data-next @mouseenter="hoverLinks($event);hoverNext($event)" @mouseleave="hoverLinks($event);hoverNext($event)">outside</span>
+          <span data-next @mouseenter="hoverLinks($event);hoverNext($event)" @mouseleave="hoverLinks($event);hoverNext($event)" @click="goToNext">outside</span>
         </div>
       </div>
     </div>
@@ -238,14 +238,28 @@
       </ul>
     </div>
 
+    <!-- ============ Main Background =============== -->
+    <div class="main-bg"></div>
+
     <nuxt v-if="appStart"/>
   </div>
 </template>
 
 <script>
-import TweenMax from "~/assets/js//gsap";
+//import TweenMax from "~/assets/js/gsap";
 import loader from "~/components/Loader.vue";
-export default {
+export default {  
+  mounted : function () {
+    const app = this;    
+    app.$root.longClickAnimation = new TimelineMax();
+    app.$router.beforeEach(function (to, from, next) {
+      app.$store.commit('set', {
+        'name': 'previousPage',
+        value: from.name
+      });      
+      next();
+    })
+  },
   data: function() {
     return {
       menuText: "Menu"
@@ -255,6 +269,9 @@ export default {
     loader
   },
   computed: {
+    page: function() {
+      return this.$store.state.page;
+    },
     appStart: function() {
       return this.$store.state.appStart;
     },
@@ -263,6 +280,9 @@ export default {
     },
     pager: function() {
       return this.$store.state.pager;
+    },
+    scroll: function() {
+      return this.$store.state.scroll;
     },
     moveCursor: function(){
       return this.$store.state.moveCursor;
@@ -278,6 +298,15 @@ export default {
     },
     transitionPage: function(){
       return this.$store.state.transitionPage;
+    },
+    cursorHoverActive: function(){
+      return this.$store.state.cursorHoverActive;
+    },
+    cursorLongAnimatePermit: function(){
+      return this.$store.state.cursorLongAnimatePermit;
+    },
+    cursorLongAnimate: function(){
+      return this.$store.state.cursorLongAnimate;
     }    
   },
   methods : {
@@ -325,6 +354,67 @@ export default {
           TweenMax.to('.preloader', 0.3, {height : 90});
         }
       }          
+    },
+    goToNext: function(){
+      const app = this;
+      let next;
+      if(app.$route.name == 'index')next = 'process';
+      if(app.$route.name == 'process')next = 'projects';
+      app.$router.push({path:next});
+    },
+    longClick : function(e){          
+      var app = this;
+      console.log(app.cursorHoverActive, app.transitionPage, app.cursorLongAnimatePermit, app.touch);
+      if(app.appStart && !app.cursorHoverActive && !app.transitionPage && app.cursorLongAnimatePermit && !app.touch){        
+        if(e.type == 'mousedown'){
+          app.$store.commit('set', {
+            name: 'cursorLongAnimate',
+            value: true
+          });
+          app.$root.longClickAnimation = new TimelineMax();
+          app.$root.longClickAnimation.to('.cursor-ring', 0.2, {scale : 1.5}, 'uno')
+          .to('.progress-ring__circle', 0.2, {stroke : app.cursorHoverColor}, 'uno')
+          .set([document.querySelectorAll('.dda span'), document.querySelectorAll('.go-tonext span')], {css : {'transition-duration' : '3s','letter-spacing': '20px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}}, 'uno')
+          .to('.preloader', 2.8, {y : 0, height : '100%', onComplete : function(){            
+            app.$store.commit('set', {
+              name: 'cursorLongAnimateDone',
+              value: true
+            });
+            var next;
+            if(app.$route.name == 'index')next = 'process';
+            if(app.$route.name == 'process')next = 'projects';            
+            app.$router.push({path:next});
+          }}, 'uno')
+          .to('.progress-ring__circle', 3, {strokeDashoffset : 150.796, onComplete : function(){
+            TweenMax.set([document.querySelectorAll('.dda span'), document.querySelectorAll('.go-tonext span')], {css : {'transition-duration' : '0.9s'}});
+          }}, 'uno');          
+        }else{          
+          if(app.cursorLongAnimate){
+            app.$store.commit('set', {
+              name: 'cursorLongAnimate',
+              value: false
+            });
+            app.$root.longClickAnimation.kill();
+            app.$root.longClickAnimation = new TimelineMax();
+            app.$root.longClickAnimation.set([document.querySelectorAll('.dda span'), document.querySelectorAll('.go-tonext span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}}, 'uno')
+            .to('.preloader', 0.6, {y : (app.mobile ? -50 : -70), height : '90px', ease: Power2.easeIn}, 'uno')
+            .to('.progress-ring__circle', 0.6, {strokeDashoffset : 0, ease: Power2.easeIn, onComplete : function(){
+              TweenMax.set([document.querySelectorAll('.dda span'), document.querySelectorAll('.go-tonext span')], {css : {'transition-duration' : '0.9s'}});
+              TweenMax.to('.progress-ring__circle', 0.2, {stroke : app.cursorColor});
+              TweenMax.to('.cursor-ring', 0.2, {scale : 1});
+            }}, 'uno');            
+          }              
+        }
+      }          
+    },
+    mousewheel: function(e){
+      const app = this;
+      console.log(app.scroll, app.transitionPage)
+      if(app.scroll && !app.transitionPage){
+        if(e.deltaY > 0){
+          app.goToNext();
+        }
+      }
     }
   }
 };
@@ -333,13 +423,16 @@ export default {
 
 <style>
 * {
-  box-sizing: border-box;
+  box-sizing: border-box;  
+}
+.noselect,
+.noselect * {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  user-select: none;
+  user-select: none;  
 }
 a {
   text-decoration: none;
@@ -655,17 +748,27 @@ header .menu,
   transition-duration: 350ms !important;
 }
 .process header a,
+.projects header a,
 .process .dda,
+.projects .dda,
 .process .g-pager,
+.projects .g-pager,
 .process .go-tonext,
-.process .menu {
+.projects .go-tonext,
+.process .menu,
+.projects .menu {
   color: #fff;
 }
 .process header .logo #logo .st0,
+.projects header .logo #logo .st0,
 .process #behance-logo .st0,
+.projects #behance-logo .st0,
 .process #dribbble .st0,
+.projects #dribbble .st0,
 .process #facebook .st0,
-.process #instagram .st0 {
+.projects #facebook .st0,
+.process #instagram .st0,
+.projects #instagram .st0 {
   fill: #fff;
 }
 
