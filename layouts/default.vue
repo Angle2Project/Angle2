@@ -258,6 +258,12 @@ export default {
         value: from.name
       });      
       next();
+    });
+    window.addEventListener('deviceorientation', function(e){
+      app.$store.commit('set', {
+        name: 'deviceorientation',
+        value: e
+      });      
     })
   },
   data: function() {

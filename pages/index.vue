@@ -78,6 +78,9 @@ export default {
     mousemove: function(){
       return this.$store.state.mousemove;
     },
+    deviceorientation: function(){
+      return this.$store.state.deviceorientation;
+    },
     cursorLongAnimate: function(){
       return this.$store.state.cursorLongAnimate;
     }
@@ -100,6 +103,25 @@ export default {
           });
         }        
       });      
+    },
+    deviceorientation: function(e){
+      if(app.cursorLongAnimate)return;
+      console.log(e.gamma);
+      var rootX = -((window.innerWidth / 2) - e.gamma);
+        document.querySelectorAll('.text h2').forEach(function(el, i, arr){
+          var moveX = 100 / (45 / e.gamma);        
+          var x = ((window.innerWidth -  el.clientWidth ) / 2) * (moveX/100);
+
+          if(el.parentElement.parentElement.className == 'left'){
+            TweenMax.to(el, 1, {
+              css : {transform : 'rotate(-15deg) skewX(-15deg) translateX('+x+'px)'}          
+            });  
+          }else{
+            TweenMax.to(el, 1, {
+              css : {transform : 'rotate(15deg) skewX(15deg) translateX('+x+'px)'}          
+            });
+          }        
+        });
     },
     cursorLongAnimate: function(val){
       const app = this;

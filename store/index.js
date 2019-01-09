@@ -22,6 +22,7 @@ const store = () => new Vuex.Store({
     cursorHoverActive: false,
     cursorLongAnimate: false,
     cursorLongAnimatePermit: true,
+    deviceorientation: null,
     home: {
 
     },

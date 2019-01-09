@@ -28,16 +28,16 @@ module.exports = {
       { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicons/favicon-16x16.png'}
     ],
     script: [      
-      // { src: '/js/TweenMax.min.js' },
-      // { src: '/js/MorphSVGPlugin.min.js'},
-      // { src: '/js/SplitText.min.js' },
-      // { src: '/js/ModifiersPlugin.min.js'}
+      { src: '/js/TweenMax.min.js' },
+      { src: '/js/MorphSVGPlugin.min.js'},
+      { src: '/js/SplitText.min.js' },
+      { src: '/js/ModifiersPlugin.min.js'}
       
       
-      { src: '/angle2-nuxt/js/TweenMax.min.js' },      
-      { src: '/angle2-nuxt/js/MorphSVGPlugin.min.js'},
-      { src: '/angle2-nuxt/js/SplitText.min.js' },
-      { src: '/angle2-nuxt/js/ModifiersPlugin.min.js' }
+      // { src: '/angle2-nuxt/js/TweenMax.min.js' },      
+      // { src: '/angle2-nuxt/js/MorphSVGPlugin.min.js'},
+      // { src: '/angle2-nuxt/js/SplitText.min.js' },
+      // { src: '/angle2-nuxt/js/ModifiersPlugin.min.js' }
       
     ]
   },
@@ -52,7 +52,8 @@ module.exports = {
   */
   css: [
     '@assets/css/normalize.css',
-    '@assets/css/vue2-scrollbar.css'
+    'swiper/dist/css/swiper.min.css'
+    //'@assets/css/vue2-scrollbar.css'
   ],
 
   /*
@@ -69,7 +70,7 @@ module.exports = {
   ],
 
   router: {
-    base: '/angle2-nuxt/'
+    //base: '/angle2-nuxt/'
   },
   
 

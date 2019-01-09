@@ -8,7 +8,7 @@
           <b>06</b>
         </div>              
       </div>       
-      <div class="projects__details_photo" data-displacement="/angle2-nuxt/img/displacement/pattern2.png" data-intensity="-0.65" data-speedIn="1" data-speedOut="1">
+      <div class="projects__details_photo" data-displacement="/img/displacement/pattern2.png" data-intensity="-0.65" data-speedIn="1" data-speedOut="1">
         <img v-for="(img, $index) in projects" :key="$index" :src="img.url" alt="Image"/>    
       </div>
     </div>
@@ -19,18 +19,16 @@
             <div class="tech">
               <b v-for="(tech, index) in project.tech" :key="index">{{tech}}</b>
             </div>
-            <router-link to="/contacts" v-if="project.dataName == 'contacts'">
+            <router-link :to="'/projects/'+project.name">
               <span v-html="project.name"></span>
             </router-link>
-            <span v-html="project.name" v-else></span>                
           </h2>          
         </div>
         <div class="right">
           <h2 @mouseenter="projectHover($event, project.dataName, index+1)" @mouseleave="projectHover($event, project.dataName, index+1)" :data-img="index" @click="showDetails" :data-name="project.dataName">
-            <router-link to="/contacts" v-if="project.dataName == 'contacts'">
+            <router-link :to="'/projects/'+project.name">
               <span v-html="project.name"></span>
             </router-link>
-            <span v-html="project.name" v-else></span>
           </h2>
         </div>            
       </li>          
@@ -80,37 +78,37 @@ export default {
               name : '4peak',
               dataName : '4peak',
               tech : ['ux', 'ui'],
-              url : '/angle2-nuxt/img/projects/4peak.jpg'
+              url : '/img/projects/4peak.jpg'
           },
           {
               name : 'reactivate',
               dataName : 'Reaktivate',
               tech : ['ux', 'ui', 'lab'],
-              url : '/angle2-nuxt/img/projects/reaktivate.jpg'
+              url : '/img/projects/reaktivate.jpg'
           },
           {
               name : 'bonex',
               dataName : 'Bonex',
               tech : ['ui', 'lab'],
-              url : '/angle2-nuxt/img/projects/bonex.jpg'
+              url : '/img/projects/bonex.jpg'
           },
           {
               name : 'bikepack',
               dataName : 'BikePack',
               tech : ['ui'],
-              url : '/angle2-nuxt/img/projects/medical.jpg'
+              url : '/img/projects/medical.jpg'
           },
           {
               name : 'vyshegrad',
               dataName : 'Vyshegrad',
               tech : ['ui', 'lab'],
-              url : '/angle2-nuxt/img/projects/vishegrad.jpg'
+              url : '/img/projects/vishegrad.jpg'
           },
           {
               name : 'floston',
               dataName : 'Floston',          
               tech : ['ux'],
-              url : '/angle2-nuxt/img/projects/floston.jpg'
+              url : '/img/projects/floston.jpg'
           }
         ]
       } 
